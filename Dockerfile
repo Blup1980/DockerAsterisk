@@ -38,7 +38,10 @@ RUN yum update -y -v && \
         speex-devel \
         gettext \
         patch \
-        -y
+        file \
+        -y && \
+    yum clean all && \
+    rm -rf /var/cache/yum 
 
 COPY *.crt /etc/pki/ca-trust/source/anchors/
 RUN update-ca-trust
