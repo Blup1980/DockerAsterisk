@@ -1,7 +1,7 @@
 version: '3'
 services:
   asterisk:
-    image: blup1980/asterisk  
+    image: blup1980/asterisk:16.8  
     ports:
      - "10000-10500:10000-10500"
      - "5060:5060"
