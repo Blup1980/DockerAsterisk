@@ -31,29 +31,34 @@ RUN yum update -y -v && \
         jansson-devel \
         make \
         bzip2 \
+        libedit-devel \
         pjproject-devel \
         libsrtp-devel \
         gsm-devel \
         speex-devel \
         gettext \
+        patch \
         -y
 
+COPY *.crt /etc/pki/ca-trust/source/anchors/
+RUN update-ca-trust
 
 # Download asterisk.
 
 WORKDIR /usr/src
-RUN git clone -b 14.7 --depth 1 https://github.com/asterisk/asterisk.git
+RUN git config --global http.sslVerify false
+RUN git clone -b 16.8 http://gerrit.asterisk.org/asterisk
 
 WORKDIR /usr/src/asterisk
 
 # Configure
-RUN ./configure --libdir=/usr/lib64 1> /dev/null
+RUN ./configure --libdir=/usr/lib64 --with-jansson-bundled 
 
 # Continue with a standard make.
 
-RUN make 1> /dev/null
-RUN make install 1> /dev/null
-RUN make samples 1> /dev/null
+RUN make 
+RUN make install
+RUN make samples
 WORKDIR /
 
 # Update max number of open files.
