@@ -1,3 +1,3 @@
 #!/bin/sh
-docker build --pull --build-arg http_proxy --build-arg https_proxy -t blup1980/asterisk:16.8 .
+docker build --pull -t blup1980/asterisk:20.4
 
