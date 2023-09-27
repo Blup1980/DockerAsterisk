@@ -47,8 +47,6 @@ WORKDIR /usr/src/asterisk
 # Configure
 RUN ./configure --libdir=/usr/lib64 --with-jansson-bundled 
 
-# Continue with a standard make.
-
 RUN make menuselect.makeopts && \
     menuselect/menuselect \
         --enable codec_opus \
@@ -66,7 +64,17 @@ RUN make menuselect.makeopts && \
         --disable codec_resample \
         --disable codec_speex \
         --disable chan_iax2 \
+        --disable chan_unistim \
+        --disable res_adsi \
+        --disable app_adsiprog \
+        --disable app_getcpeid \
+        --disable res_prometheus \
+        --disable app_cdr \
+        --disable app_db \
+        --disable-category MENUSELECT_CDR \
+        --disable-category MENUSELECT_CEL \
         --disable-category MENUSELECT_CORE_SOUNDS \
+        --disable-category MENUSELECT_MOH \
         --disable-category MENUSELECT_EXTRA_SOUNDS \
     menuselect.makeopts
 
@@ -92,6 +100,7 @@ RUN apt-get update && \
         sqlite3 \
         libssl-dev \
         libnewt-dev \
+        libsqlite3-dev \
         uuid \
         xmlstarlet \
         snmp \
@@ -112,6 +121,7 @@ COPY --from=builder --chown=asterisk:asterisk /var/spool/asterisk/ /var/spool/as
 COPY --from=builder --chown=asterisk:asterisk /var/log/asterisk/ /var/log/asterisk/
 COPY --from=builder --chown=asterisk:asterisk /usr/sbin/asterisk /usr/sbin/asterisk
 COPY --from=builder --chown=asterisk:asterisk /var/lib/asterisk/ /var/lib/asterisk/
+COPY --from=builder --chown=asterisk:asterisk /usr/lib/x86_64-linux-gnu/libcurl.so* /usr/lib/x86_64-linux-gnu/
 
 RUN echo "/usr/lib64" > /etc/ld.so.conf.d/asterisk.conf 
 RUN ldconfig
