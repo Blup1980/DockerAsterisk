@@ -1,45 +1,27 @@
-FROM alpine:latest
+FROM debian:12.2
 MAINTAINER Xavier Raemy
 
 VOLUME ["/etc/asterisk"]
 EXPOSE 5060/udp
 EXPOSE 5060/tcp
 
-RUN apk update \
-	&& apk add git
+RUN apt update \
+	&& apt install -y git
 
 WORKDIR /usr/src
 
 # Download asterisk.
 RUN git clone -b 20.4.0 https://github.com/asterisk/asterisk.git
 
-RUN apk update \
-  	&& apk add libtool libuuid jansson libxml2 sqlite-libs readline libcurl libressl zlib libsrtp lua5.1-libs spandsp unbound-libs \
-        git \
-        gcc \
-        ncurses \
-        libxml2 \
-        sqlite \
-        newt \
-        tar \
-        make \
-        bzip2 \
-        pjproject \
-        libsrtp \
-        gettext \
-        patch \
-	vim \
-	speex \
-	speexdsp \
-	build-base patch bsd-compat-headers util-linux-dev ncurses-dev libresample \
-        jansson-dev libxml2-dev sqlite-dev readline-dev curl-dev unbound-dev \
-        zlib-dev libsrtp-dev lua-dev spandsp-dev libedit-dev speex-dev speexdsp-dev
-
+RUN apt update &&apt -y install build-essential git curl wget libnewt-dev libssl-dev libncurses5-dev subversion libsqlite3-dev libjansson-dev libxml2-dev uuid-dev default-libmysqlclient-dev \
+	libedit-dev libspeex-dev libspeexdsp-dev && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/asterisk
 
+RUN contrib/scripts/install_prereq install
+
 # Configure
-RUN ./configure --without-pjproject-bundled 
+RUN ./configure 
 
 # Continue with a standard make.
 RUN make menuselect.makeopts
@@ -69,13 +51,9 @@ RUN ./menuselect/menuselect \
     menuselect.makeopts
 
 
-#RUN make 
-#RUN make install
+RUN make 
+RUN make install
 WORKDIR /
 
-# Update max number of open files.
-#RUN sed -i -e 's/# MAXFILES=/MAXFILES=/' /usr/sbin/safe_asterisk
-
-
 # And run asterisk in the foreground.
-CMD asterisk -fv
+CMD asterisk -fvvv
