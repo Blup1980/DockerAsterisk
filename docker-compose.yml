@@ -7,11 +7,7 @@ services:
      - "5060:5060"
     entrypoint: asterisk -cvvv
     volumes:
-        - asteriskConf:/etc/asterisk
+        - ./etc/asterisk:/etc/asterisk
 
     stdin_open: true
     tty: true
-
-volumes:
-    asteriskConf:
-        external: true

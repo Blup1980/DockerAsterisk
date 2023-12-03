@@ -9,9 +9,9 @@ RUN apk update \
 	&& apk add git
 
 WORKDIR /usr/src
+
+# Download asterisk.
 RUN git clone -b 20.4.0 https://github.com/asterisk/asterisk.git
-
-
 
 RUN apk update \
   	&& apk add libtool libuuid jansson libxml2 sqlite-libs readline libcurl libressl zlib libsrtp lua5.1-libs spandsp unbound-libs \
@@ -28,25 +28,21 @@ RUN apk update \
         libsrtp \
         gettext \
         patch \
-	vim
-
-RUN apk add --virtual .build-deps build-base patch bsd-compat-headers util-linux-dev ncurses-dev libresample \
+	vim \
+	speex \
+	speexdsp \
+	build-base patch bsd-compat-headers util-linux-dev ncurses-dev libresample \
         jansson-dev libxml2-dev sqlite-dev readline-dev curl-dev unbound-dev \
-        zlib-dev libsrtp-dev lua-dev spandsp-dev libedit-dev 
+        zlib-dev libsrtp-dev lua-dev spandsp-dev libedit-dev speex-dev speexdsp-dev
 
-
-# Download asterisk.
 
 WORKDIR /usr/src/asterisk
 
 # Configure
-RUN ./configure --with-pjproject-bundled 
+RUN ./configure --without-pjproject-bundled 
 
 # Continue with a standard make.
-
 RUN make menuselect.makeopts
-
-
 
 RUN ./menuselect/menuselect \
     --disable BUILD_NATIVE \
@@ -73,16 +69,13 @@ RUN ./menuselect/menuselect \
     menuselect.makeopts
 
 
-# RUN make 
-# RUN make install
-# RUN make samples
+#RUN make 
+#RUN make install
 WORKDIR /
 
 # Update max number of open files.
-
-# RUN sed -i -e 's/# MAXFILES=/MAXFILES=/' /usr/sbin/safe_asterisk
+#RUN sed -i -e 's/# MAXFILES=/MAXFILES=/' /usr/sbin/safe_asterisk
 
 
 # And run asterisk in the foreground.
-
 CMD asterisk -fv
