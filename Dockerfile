@@ -2,11 +2,12 @@ FROM debian:12.2
 MAINTAINER Xavier Raemy
 
 VOLUME ["/etc/asterisk"]
+VOLUME ["/var/lib/asterisk/sounds"]
 EXPOSE 5060/udp
 EXPOSE 5060/tcp
 
 RUN apt update \
-	&& apt install -y git
+	&& apt install -y git && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src
 
@@ -18,7 +19,7 @@ RUN apt update &&apt -y install build-essential git curl wget libnewt-dev libssl
 
 WORKDIR /usr/src/asterisk
 
-RUN contrib/scripts/install_prereq install
+RUN apt update &&contrib/scripts/install_prereq install && rm -rf /var/lib/apt/lists/*
 
 # Configure
 RUN ./configure 

@@ -8,6 +8,6 @@ services:
     entrypoint: asterisk -cvvv
     volumes:
         - ./etc/asterisk:/etc/asterisk
-
+        - ./sounds:/var/lib/asterisk/sounds
     stdin_open: true
     tty: true
