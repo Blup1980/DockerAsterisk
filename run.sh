@@ -1,2 +1,2 @@
-docker run -it --name asterisk -p 10000-11000:10000-11000 -p 5060-5061:5060-5061 -v asteriskConf:/etc/asterisk blup1980/asterisk 
+docker run -it -v ./etc/asterisk:/etc/asterisk -v ./sounds:/var/lib/asterisk/sounds --network host blup1980/asterisk:20.4
 

@@ -7,10 +7,6 @@ Main design decisions
  - speex codec for high quality audio
 
 
-
-
-
-
 Build
 -----
 
@@ -23,3 +19,17 @@ Build
      and run 'make sample' and 'make config'
      The default configuration will be copied in the etc/asterisk directory 
 
+Run
+---
+
+ - Autorun in managed by docker restart policy not systemd services
+ - To query the status of the autorun : 'docker inspect <containerName> | less' 
+   and check for the RestartPolicy entry
+ - to Disable the autorun: 'docker update --restart=no <containerName>'
+ - to Enable the autorun: 'docker update --restart=Always <containerName>'
+ - Due to issues with forwaring a lot of ports, the comntainer is bridged. Trying the uses the -v command takes hours.
+
+MicroSIP
+-------
+ - Ensure using UDP only, TCP + UDP creates a delay for the failure of the TCP connection.
+ - Disable echo cancellation (EC) to improve the delay
