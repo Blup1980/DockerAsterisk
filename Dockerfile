@@ -28,7 +28,6 @@ RUN ./configure
 RUN make menuselect.makeopts
 
 RUN ./menuselect/menuselect \
-    --disable BUILD_NATIVE \
     --disable-category MENUSELECT_CORE_SOUNDS \
     --disable-category MENUSELECT_MOH \
     --disable-category MENUSELECT_EXTRA_SOUNDS \
@@ -49,12 +48,20 @@ RUN ./menuselect/menuselect \
     --disable res_smdi \
     --disable astdb2sqlite3 \
     --disable astdb2bdb \
+    --disable cdr_radius \
+    --disable cel_radius \
+    --disable cdr_pgsql \
+    --disable cel_pgsql \
+    --disable cel_tds \
+    --disable cdr_tds \
+    --disable cdr_sqlite3_custom \
+    --disable cel_sqlite3_custom \
     menuselect.makeopts
 
 
-RUN make 
+RUN make -j4 
 RUN make install
 WORKDIR /
 
 # And run asterisk in the foreground.
-CMD asterisk -fvvv
+CMD ["/usr/sbin/asterisk" , "-cvvv"]
